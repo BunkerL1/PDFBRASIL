@@ -1,21 +1,8 @@
 {
-  "name": "PDF Brasil",
-  "short_name": "PDFBrasil",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#4CAF50",
-  "description": "Leitor de PDF rápido e eficiente",
-  "icons": [
-    {
-      "src": "ic2.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "ic.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
+  "name": "PDFBRASIL",
+  "theme_color": "#e1de14",
+  "background_color": "#288a19",
+  "short_name": "PDF",
+  "id": "com.bunkerl1.pdfbrasil",
+  "description": "Leitor PDF prático e simples, sem incomodos de ads"
 }
