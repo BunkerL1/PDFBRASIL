@@ -1,22 +1,28 @@
 {
-  "name": "PDFBRASIL",
+  "name": "PDF Brasil",
   "short_name": "PDF",
   "description": "Leitor PDF prático e simples, sem incômodos de ads.",
   "start_url": "https://bunkerl1.github.io/PDFBRASIL/",
   "display": "standalone",
-  "theme_color": "#e1de14",
   "background_color": "#288a19",
+  "theme_color": "#e1de14",
   "icons": [
     {
-      "src": "ic2.png",
+      "src": "/icons/icone-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "ic.png",
+      "src": "/icons/icone-512x512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
-  "id": "com.bunkerl1.pdfbrasil"
+  "id": "com.bunkerl1.pdfbrasil",
+  "orientation": "portrait",
+  "launch_handler": {
+    "client_mode": "multiple"
+  }
 }
