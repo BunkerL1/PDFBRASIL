@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Brasil</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .header {
+      background: linear-gradient(90deg, green, yellow);
+      color: white;
+      text-align: center;
+      padding: 5px;
+      font-size: 20px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      position: relative; /* Para permitir posicionar o botão "Sobre" */
+    }
+
+    .header h1 {
+      margin: 0; /* Remove margem para centralizar melhor */
+    }
+
+    .about-button {
+      position: absolute; 
+      right: 10px; 
+      top: 5px; 
+      z-index: 1; /* Garante que o botão fique acima do cabeçalho */
+    }
+
+    .container {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      overflow: hidden;
+    }
+
+    .pdf-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: auto;
+      width: 100%;
+      height: 100%;
+      background: white;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      position: relative;
+    }
+
+    canvas {
+      display: block;
+      margin: auto;
+    }
+
+    #pdf-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 10px 0;
+    }
+
+    #pdf-controls button {
+      margin: 0 5px;
+      padding: 8px 10px;
+      font-size: 14px;
+    }
+
+    #file-input {
+      display: none;
+    }
+
+    label {
+      cursor: pointer;
+      color: green;
+      background: yellow;
+      padding: 8px 10px;
+      border-radius: 5px;
+      font-size: 14px;
+      margin: 10px;
+      transition: background-color 0.3s;
+    }
+
+    label:hover {
+      background: #d3d300;
+    }
+
+    .page-info {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 5px 10px;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+      font-size: 14px;
+    }
+
+    .highlight {
+      background-color: rgba(255, 255, 0, 0.5);
+      position: absolute;
+      pointer-events: none;
+    }
+
+    /* Estilos para o modal */
+    .modal-header {
+      background: linear-gradient(90deg, green, yellow);
+      color: white;
+    }
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 18px; /* Ajuste o tamanho da fonte para telas menores */
+      }
+
+      #pdf-controls {
+        flex-direction: column; /* Muda a direção dos controles em telas pequenas */
+      }
+
+      #pdf-controls button {
+        width: 100%; /* Botões ocupam 100% da largura em telas pequenas */
+        margin: 5px 0; /* Margem em cima e embaixo dos botões */
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>PDF Brasil</h1>
+    <button class="btn btn-info about-button" id="about-button">Sobre</button>
+  </div>
+
+  <div class="container">
+    <div class="pdf-wrapper" id="pdf-wrapper">
+      <!-- As páginas serão adicionadas aqui -->
+    </div>
+    
+    <div class="page-info" id="page-info">
+      Página: <span id="current-page">1</span> / <span id="total-pages">0</span>
+    </div>
+
+    <div id="pdf-controls">
+      <button class="btn btn-primary" id="prev-page">← Página Anterior</button>
+      <button class="btn btn-primary" id="next-page">Próxima Página →</button>
+      <button class="btn btn-secondary" id="zoom-out">Zoom -</button>
+      <button class="btn btn-secondary" id="zoom-in">Zoom +</button>
+    </div>
+
+    <input type="file" id="file-input" accept="application/pdf">
+    <label for="file-input">Upload PDF</label>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="aboutModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="aboutModalLabel">Sobre o PDF Brasil</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>O PDF Brasil é um leitor de arquivos PDF criado por Marcos Lopes dos Santos.</p>
+          <p>Este programa foi desenvolvido para oferecer uma experiência de leitura de PDFs sem propagandas, focando na simplicidade e eficiência.</p>
+          <p>Funcionalidades:</p>
+          <ul>
+            <li>Carregamento rápido de arquivos PDF.</li>
+            <li>Navegação fácil entre páginas.</li>
+            <li>Controle de zoom para melhor visualização.</li>
+            <li>Interface leve e intuitiva.</li>
+          </ul>
+          <p>Esperamos que você aprecie a leitura!</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+  <script>
+    const fileInput = document.getElementById('file-input');
+    const pdfWrapper = document.getElementById('pdf-wrapper');
+    const currentPageElem = document.getElementById('current-page');
+    const totalPagesElem = document.getElementById('total-pages');
+
+    let pdfDoc = null,
+        pageNum = 1,
+        scale = 1.0; // Escala inicial do zoom
+
+    const renderPage = (num) => {
+      pdfDoc.getPage(num).then((page) => {
+        const viewport = page.getViewport({ scale: scale });
+        const pageCanvas = document.createElement('canvas');
+        const pageCtx = pageCanvas.getContext('2d');
+
+        // Ajusta o tamanho do canvas para caber no wrapper
+        pageCanvas.height = viewport.height;
+        pageCanvas.width = viewport.width;
+
+        const renderContext = {
+          canvasContext: pageCtx,
+          viewport: viewport // Mantém a orientação correta
+        };
+
+        page.render(renderContext).promise.then(() => {
+          pdfWrapper.innerHTML = ''; // Limpa o conteúdo anterior
+          pdfWrapper.appendChild(pageCanvas); // Adiciona a página renderizada ao wrapper
+
+          // Atualiza a contagem de páginas
+          currentPageElem.textContent = pageNum;
+          totalPagesElem.textContent = pdfDoc.numPages;
+
+          // Rola para o topo após renderizar a página
+          pdfWrapper.scrollTop = 0; // Volta para o topo
+        });
+      });
+    };
+
+    const showPage = (num) => {
+      if (num < 1 || num > pdfDoc.numPages) {
+        return; // Se o número da página estiver fora dos limites, não faz nada
+      }
+      renderPage(num); // Renderiza a página
+    };
+
+    const showPrevPage = () => {
+      if (pageNum <= 1) {
+        return;
+      }
+      pageNum--;
+      showPage(pageNum);
+    };
+
+    const showNextPage = () => {
+      if (pageNum >= pdfDoc.numPages) {
+        return;
+      }
+      pageNum++;
+      showPage(pageNum);
+    };
+
+    const zoomIn = () => {
+      scale += 0.1; // Aumenta a escala
+      showPage(pageNum); // Renderiza a página atual com nova escala
+    };
+
+    const zoomOut = () => {
+      if (scale <= 0.1) {
+        return; // Previne zoom negativo
+      }
+      scale -= 0.1; // Diminui a escala
+      showPage(pageNum); // Renderiza a página atual com nova escala
+    };
+
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file.type !== 'application/pdf') {
+        alert('Por favor, escolha um arquivo PDF.');
+        return;
+      }
+
+      const fileReader = new FileReader();
+      fileReader.onload = (event) => {
+        const pdfData = new Uint8Array(event.target.result);
+        pdfjsLib.getDocument(pdfData).promise.then((pdf) => {
+          pdfDoc = pdf;
+          totalPagesElem.textContent = pdf.numPages;
+          showPage(pageNum); // Renderiza a primeira página
+        });
+      };
+      fileReader.readAsArrayBuffer(file);
+    });
+
+    document.getElementById('prev-page').addEventListener('click', showPrevPage);
+    document.getElementById('next-page').addEventListener('click', showNextPage);
+    document.getElementById('zoom-in').addEventListener('click', zoomIn);
+    document.getElementById('zoom-out').addEventListener('click', zoomOut);
+    
+    // Exibe o modal quando o botão "Sobre" é clicado
+    document.getElementById('about-button').addEventListener('click', () => {
+      $('#aboutModal').modal('show'); // Mostra o modal "Sobre"
+    });
+  </script>
+</body>
+</html>
